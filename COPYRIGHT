@@ -1,16 +1,16 @@
-Copyright 2020 Manfred Touron and other golang-repo-template Developers.
+Copyright 2020 Manfred Touron and other zapgorm2 Developers.
 
 Intellectual Property Notice
 ----------------------------
 
-golang-repo-template is licensed under the Apache License, Version 2.0
+zapgorm2 is licensed under the Apache License, Version 2.0
 (see LICENSE-APACHE or http://www.apache.org/licenses/LICENSE-2.0) or
 the MIT license (see LICENSE-MIT or http://opensource.org/licenses/MIT),
 at your option.
 
-Copyrights and patents in the golang-repo-templates project are retained
+Copyrights and patents in the zapgorm2s project are retained
 by contributors.
-No copyright assignment is required to contribute to golang-repo-template.
+No copyright assignment is required to contribute to zapgorm2.
 
     SPDX-License-Identifier: (Apache-2.0 OR MIT)
 

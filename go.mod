@@ -1,4 +1,4 @@
-module moul.io/golang-repo-template
+module moul.io/zapgorm2
 
 go 1.13
 
