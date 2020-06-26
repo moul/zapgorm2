@@ -1,3 +1,0 @@
-#!/bin/sh
-
-run-parts ./githooks/pre-commit.d/ -v --exit-on-error
