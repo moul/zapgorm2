@@ -1,9 +1,8 @@
 module moul.io/zapgorm2
 
-go 1.13
+go 1.15
 
 require (
-	go.uber.org/zap v1.15.0
-	golang.org/x/tools v0.0.0-20191108193012-7d206e10da11 // indirect
-	gorm.io/gorm v1.9.19
+	go.uber.org/zap v1.16.0
+	gorm.io/gorm v1.20.0
 )
