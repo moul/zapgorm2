@@ -11,7 +11,7 @@ jobs:
   golangci-lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2.4.0
+      - uses: actions/checkout@v3.0.1
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v2.5.2
         with:
@@ -28,7 +28,7 @@ jobs:
           #- 1.13
           - 1.14
     steps:
-      - uses: actions/checkout@v2.4.0
+      - uses: actions/checkout@v3.0.1
       - name: Install Go
         uses: actions/setup-go@v2
         with:
@@ -46,7 +46,7 @@ jobs:
       OS: macos-latest
       GOLANG: ${{ matrix.golang }}
     steps:
-      - uses: actions/checkout@v2.4.0
+      - uses: actions/checkout@v3.0.1
       - name: Install Go
         uses: actions/setup-go@v2
         with:
@@ -86,7 +86,7 @@ jobs:
       OS: ubuntu-latest
       GOLANG: ${{ matrix.golang }}
     steps:
-      - uses: actions/checkout@v2.4.0
+      - uses: actions/checkout@v3.0.1
       - name: Install Go
         uses: actions/setup-go@v2
         with:
