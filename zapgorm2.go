@@ -92,8 +92,10 @@ func (l Logger) Trace(ctx context.Context, begin time.Time, fc func() (string, i
 }
 
 var (
-	gormPackage    = filepath.Join("gorm.io", "gorm")
-	zapgormPackage = filepath.Join("moul.io", "zapgorm2")
+	gormPackage            = filepath.Join("gorm.io", "gorm")
+	zapgormPackage         = filepath.Join("moul.io", "zapgorm2")
+	gormPackageTrimPath    = "gorm@"
+	zapgormPackageTrimPath = "zapgorm2@"
 )
 
 func (l Logger) logger(ctx context.Context) *zap.Logger {
@@ -110,6 +112,8 @@ func (l Logger) logger(ctx context.Context) *zap.Logger {
 		case strings.HasSuffix(file, "_test.go"):
 		case strings.Contains(file, gormPackage):
 		case strings.Contains(file, zapgormPackage):
+		case strings.HasPrefix(file, gormPackageTrimPath):
+		case strings.HasPrefix(file, zapgormPackageTrimPath):
 		default:
 			return logger.WithOptions(zap.AddCallerSkip(i))
 		}
