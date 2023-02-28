@@ -103,6 +103,10 @@ func (l Logger) logger(ctx context.Context) *zap.Logger {
 		logger = logger.With(fields...)
 	}
 
+	if l.SkipCallerLookup {
+		return logger
+	}
+
 	for i := 2; i < 15; i++ {
 		_, file, _, ok := runtime.Caller(i)
 		switch {
