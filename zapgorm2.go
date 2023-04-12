@@ -51,21 +51,21 @@ func (l Logger) LogMode(level gormlogger.LogLevel) gormlogger.Interface {
 	}
 }
 
-func (l Logger) Info(ctx context.Context, str string, args ...interface{}) {
+func (l Logger) Info(ctx context.Context, str string, args ...any) {
 	if l.LogLevel < gormlogger.Info {
 		return
 	}
 	l.logger(ctx).Sugar().Debugf(str, args...)
 }
 
-func (l Logger) Warn(ctx context.Context, str string, args ...interface{}) {
+func (l Logger) Warn(ctx context.Context, str string, args ...any) {
 	if l.LogLevel < gormlogger.Warn {
 		return
 	}
 	l.logger(ctx).Sugar().Warnf(str, args...)
 }
 
-func (l Logger) Error(ctx context.Context, str string, args ...interface{}) {
+func (l Logger) Error(ctx context.Context, str string, args ...any) {
 	if l.LogLevel < gormlogger.Error {
 		return
 	}

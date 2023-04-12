@@ -9,7 +9,8 @@ import (
 	"go.uber.org/zap/zapcore"
 	"go.uber.org/zap/zaptest/observer"
 	"gorm.io/gorm"
-	"moul.io/zapgorm2"
+
+	"github.com/68696c6c/zapgorm2"
 )
 
 func Example() {
@@ -57,5 +58,4 @@ func TestContextFunc(t *testing.T) {
 	require.Equal(t, "test", entry.Message)
 	require.Equal(t, value1, entry.ContextMap()[string(key1)])
 	require.Equal(t, value2, entry.ContextMap()[string(key2)])
-
 }
