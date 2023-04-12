@@ -55,7 +55,7 @@ func (l Logger) Info(ctx context.Context, str string, args ...any) {
 	if l.LogLevel < gormlogger.Info {
 		return
 	}
-	l.logger(ctx).Sugar().Debugf(str, args...)
+	l.logger(ctx).Sugar().Infof(str, args...)
 }
 
 func (l Logger) Warn(ctx context.Context, str string, args ...any) {
