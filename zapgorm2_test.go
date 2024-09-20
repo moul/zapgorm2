@@ -2,13 +2,16 @@ package zapgorm2_test
 
 import (
 	"context"
+	"errors"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"go.uber.org/zap/zaptest/observer"
 	"gorm.io/gorm"
+	gormlogger "gorm.io/gorm/logger"
 	"moul.io/zapgorm2"
 )
 
@@ -18,7 +21,7 @@ func Example() {
 	db, _ := gorm.Open(nil, &gorm.Config{Logger: logger})
 
 	// do stuff normally
-	var _ = db // avoid "unused variable" warn
+	_ = db // avoid "unused variable" warn
 }
 
 func setupLogsCapture() (*zap.Logger, *observer.ObservedLogs) {
@@ -57,5 +60,30 @@ func TestContextFunc(t *testing.T) {
 	require.Equal(t, "test", entry.Message)
 	require.Equal(t, value1, entry.ContextMap()[string(key1)])
 	require.Equal(t, value2, entry.ContextMap()[string(key2)])
+}
 
+func TestTrace(t *testing.T) {
+	zaplogger, logs := setupLogsCapture()
+	emptyCb := func() (s string, i int64) { return }
+
+	t.Run("ignore errors", func(t *testing.T) {
+		logger := zapgorm2.Logger{
+			ZapLogger:        zaplogger,
+			LogLevel:         gormlogger.Warn,
+			SlowThreshold:    100 * time.Millisecond,
+			SkipCallerLookup: false,
+			Context:          nil,
+			IgnoreErrors:     errors.Join(gorm.ErrRecordNotFound, gorm.ErrDuplicatedKey),
+		}
+
+		logger.Trace(context.Background(), time.Now(), emptyCb, gorm.ErrDuplicatedKey)
+		require.Equal(t, 0, logs.Len())
+	})
+
+	t.Run("log errors", func(t *testing.T) {
+		logger := zapgorm2.New(zaplogger)
+
+		logger.Trace(context.Background(), time.Now(), emptyCb, gorm.ErrDuplicatedKey)
+		require.Equal(t, 1, logs.Len())
+	})
 }

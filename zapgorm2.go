@@ -10,29 +10,31 @@ import (
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-	"gorm.io/gorm"
 	gormlogger "gorm.io/gorm/logger"
 )
 
 type ContextFn func(ctx context.Context) []zapcore.Field
 
 type Logger struct {
-	ZapLogger                 *zap.Logger
-	LogLevel                  gormlogger.LogLevel
-	SlowThreshold             time.Duration
-	SkipCallerLookup          bool
-	IgnoreRecordNotFoundError bool
-	Context                   ContextFn
+	ZapLogger        *zap.Logger
+	LogLevel         gormlogger.LogLevel
+	SlowThreshold    time.Duration
+	SkipCallerLookup bool
+
+	// Useful for ignoring errors like gorm.ErrRecordNotFound
+	// To ignore mulitple errors use errors.Join()
+	IgnoreErrors error
+	Context      ContextFn
 }
 
 func New(zapLogger *zap.Logger) Logger {
 	return Logger{
-		ZapLogger:                 zapLogger,
-		LogLevel:                  gormlogger.Warn,
-		SlowThreshold:             100 * time.Millisecond,
-		SkipCallerLookup:          false,
-		IgnoreRecordNotFoundError: false,
-		Context:                   nil,
+		ZapLogger:        zapLogger,
+		LogLevel:         gormlogger.Warn,
+		SlowThreshold:    100 * time.Millisecond,
+		SkipCallerLookup: false,
+		Context:          nil,
+		IgnoreErrors:     nil,
 	}
 }
 
@@ -42,12 +44,12 @@ func (l Logger) SetAsDefault() {
 
 func (l Logger) LogMode(level gormlogger.LogLevel) gormlogger.Interface {
 	return Logger{
-		ZapLogger:                 l.ZapLogger,
-		SlowThreshold:             l.SlowThreshold,
-		LogLevel:                  level,
-		SkipCallerLookup:          l.SkipCallerLookup,
-		IgnoreRecordNotFoundError: l.IgnoreRecordNotFoundError,
-		Context:                   l.Context,
+		ZapLogger:        l.ZapLogger,
+		SlowThreshold:    l.SlowThreshold,
+		LogLevel:         level,
+		SkipCallerLookup: l.SkipCallerLookup,
+		Context:          l.Context,
+		IgnoreErrors:     l.IgnoreErrors,
 	}
 }
 
@@ -79,7 +81,7 @@ func (l Logger) Trace(ctx context.Context, begin time.Time, fc func() (string, i
 	elapsed := time.Since(begin)
 	logger := l.logger(ctx)
 	switch {
-	case err != nil && l.LogLevel >= gormlogger.Error && (!l.IgnoreRecordNotFoundError || !errors.Is(err, gorm.ErrRecordNotFound)):
+	case err != nil && l.LogLevel >= gormlogger.Error && !errors.Is(l.IgnoreErrors, err):
 		sql, rows := fc()
 		logger.Error("trace", zap.Error(err), zap.Duration("elapsed", elapsed), zap.Int64("rows", rows), zap.String("sql", sql))
 	case l.SlowThreshold != 0 && elapsed > l.SlowThreshold && l.LogLevel >= gormlogger.Warn:
