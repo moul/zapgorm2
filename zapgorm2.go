@@ -23,17 +23,31 @@ type Logger struct {
 	SkipCallerLookup          bool
 	IgnoreRecordNotFoundError bool
 	Context                   ContextFn
+	ParameterizedQueries      bool
 }
 
-func New(zapLogger *zap.Logger) Logger {
-	return Logger{
+type Option func(*Logger)
+
+func WithParamFilter(on bool) Option {
+	return func(l *Logger) { l.ParameterizedQueries = on }
+}
+
+func New(zapLogger *zap.Logger, opts ...Option) Logger {
+	l := Logger{
 		ZapLogger:                 zapLogger,
 		LogLevel:                  gormlogger.Warn,
 		SlowThreshold:             100 * time.Millisecond,
 		SkipCallerLookup:          false,
 		IgnoreRecordNotFoundError: false,
 		Context:                   nil,
+		ParameterizedQueries:      false,
 	}
+
+	for _, opt := range opts {
+		opt(&l)
+	}
+
+	return l
 }
 
 func (l Logger) SetAsDefault() {
@@ -48,6 +62,7 @@ func (l Logger) LogMode(level gormlogger.LogLevel) gormlogger.Interface {
 		SkipCallerLookup:          l.SkipCallerLookup,
 		IgnoreRecordNotFoundError: l.IgnoreRecordNotFoundError,
 		Context:                   l.Context,
+		ParameterizedQueries:      l.ParameterizedQueries,
 	}
 }
 
@@ -119,4 +134,11 @@ func (l Logger) logger(ctx context.Context) *zap.Logger {
 		}
 	}
 	return logger
+}
+
+func (l Logger) ParamsFilter(ctx context.Context, sql string, params ...interface{}) (string, []interface{}) {
+	if l.ParameterizedQueries {
+		return sql, nil
+	}
+	return sql, params
 }
