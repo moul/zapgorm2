@@ -11,12 +11,12 @@ jobs:
   golangci-lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2.4.0
+      - uses: actions/checkout@v2.8.0
       - uses: actions/setup-go@v3
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
-          version: v1.50.1
+          version: v1.64.8
           github-token: ${{ secrets.GITHUB_TOKEN }}
           args: --timeout=2m
           only-new-issues: false
@@ -29,7 +29,7 @@ jobs:
           #- 1.13
           - 1.14
     steps:
-      - uses: actions/checkout@v2.4.0
+      - uses: actions/checkout@v2.8.0
       - name: Install Go
         uses: actions/setup-go@v2
         with:
@@ -47,12 +47,12 @@ jobs:
       OS: macos-latest
       GOLANG: ${{ matrix.golang }}
     steps:
-      - uses: actions/checkout@v2.4.0
+      - uses: actions/checkout@v2.8.0
       - name: Install Go
         uses: actions/setup-go@v2
         with:
           go-version: ${{ matrix.golang }}
-      - uses: actions/cache@v3.3.0
+      - uses: actions/cache@v3.5.0
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ matrix.golang }}-${{ hashFiles('**/go.sum') }}
@@ -87,12 +87,12 @@ jobs:
       OS: ubuntu-latest
       GOLANG: ${{ matrix.golang }}
     steps:
-      - uses: actions/checkout@v2.4.0
+      - uses: actions/checkout@v2.8.0
       - name: Install Go
         uses: actions/setup-go@v2
         with:
           go-version: ${{ matrix.golang }}
-      - uses: actions/cache@v3.3.0
+      - uses: actions/cache@v3.5.0
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ matrix.golang }}-${{ hashFiles('**/go.sum') }}
